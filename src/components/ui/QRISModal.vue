@@ -52,7 +52,7 @@
         <div class="flex items-start">
           <i class='bx bx-error text-yellow-600 text-2xl mr-3 mt-1'></i>
           <div class="text-left flex-1">
-            <p class="text-base font-bold text-yellow-800 mb-1">PENTING! Pastikan Nominal Pembayaran</p>
+            <p class="text-base font-bold text-yellow-800 mb-1">Pastikan Nominal Pembayaran</p>
             <div class="bg-yellow-100 rounded-md p-3 mb-2">
               <p class="text-lg font-bold text-yellow-900 text-center">
                 Rp {{ formatCurrency(orderInfo.totalAmount) }}

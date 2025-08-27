@@ -6,7 +6,7 @@ const baseURL = import.meta.env.MODE === 'development'
 
 export const api = axios.create({
   baseURL,
-  timeout: 10000,
+  timeout: 30000, // Increased timeout for serverless functions
   headers: {
     'Content-Type': 'application/json',
   },
@@ -36,9 +36,17 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error('API Response Error:', error.response?.status, error.response?.data, error.config?.url)
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
-      window.location.href = '/admin/login'
+      
+      // Redirect based on current path
+      const currentPath = window.location.pathname
+      if (currentPath.startsWith('/admin')) {
+        window.location.href = '/admin/login'
+      } else {
+        window.location.href = '/auth'
+      }
     }
     return Promise.reject(error)
   }

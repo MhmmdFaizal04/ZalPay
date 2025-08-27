@@ -43,7 +43,9 @@ export const authController = {
       res.json(createResponse(true, 'Login berhasil', { user: userData, token }));
     } catch (error) {
       console.error('Login error:', error);
-      res.status(500).json(createResponse(false, 'Server error'));
+      const isProduction = process.env.NODE_ENV === 'production';
+      const errorMessage = isProduction ? 'Server error' : error.message;
+      res.status(500).json(createResponse(false, errorMessage));
     }
   },
 

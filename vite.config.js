@@ -5,6 +5,7 @@ import { resolve } from 'path'
 export default defineConfig(({ command, mode }) => {
   return {
     plugins: [vue()],
+    base: '/',
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src'),
@@ -15,6 +16,7 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       outDir: 'dist',
+      assetsDir: 'assets',
       rollupOptions: {
         output: {
           manualChunks: {

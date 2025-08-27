@@ -37,8 +37,7 @@ export const orderController = {
         variant,
         quantity: parseInt(quantity),
         total_price,
-        customer_info,
-        status: 'pending'
+        customer_info
       });
 
       console.log('Order created:', newOrder);
@@ -92,33 +91,6 @@ export const orderController = {
       res.json(createResponse(true, 'Order berhasil diambil', { order }));
     } catch (error) {
       console.error('Get order by order_id error:', error);
-      res.status(500).json(createResponse(false, 'Server error'));
-    }
-  },
-
-  async updateOrderStatus(req, res) {
-    try {
-      const { id } = req.params;
-      const { status } = req.body;
-
-      if (!status) {
-        return res.status(400).json(createResponse(false, 'Status harus diisi'));
-      }
-
-      const validStatuses = ['pending', 'processing', 'completed', 'cancelled'];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json(createResponse(false, 'Status tidak valid'));
-      }
-
-      const existingOrder = await Order.findById(id);
-      if (!existingOrder) {
-        return res.status(404).json(createResponse(false, 'Order tidak ditemukan'));
-      }
-
-      const updatedOrder = await Order.updateStatus(id, status);
-      res.json(createResponse(true, 'Status order berhasil diupdate', { order: updatedOrder }));
-    } catch (error) {
-      console.error('Update order status error:', error);
       res.status(500).json(createResponse(false, 'Server error'));
     }
   },

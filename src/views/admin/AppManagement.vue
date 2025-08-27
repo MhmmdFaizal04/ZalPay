@@ -437,7 +437,7 @@ export default {
     }
 
     const deleteApp = async (app) => {
-      if (!confirm(`Yakin ingin menghapus aplikasi "${app.name}"?`)) return
+      if (!confirm(`Yakin ingin menghapus aplikasi "${app.name}"?\n\nPerhatian: Aplikasi yang memiliki pesanan tidak dapat dihapus.`)) return
       
       try {
         const result = await appsStore.deleteApp(app.id)
@@ -446,7 +446,12 @@ export default {
           await loadApps()
           alert(`Aplikasi "${app.name}" berhasil dihapus`)
         } else {
-          alert(result.message || 'Gagal menghapus aplikasi')
+          // Show more informative error message
+          if (result.message.includes('pesanan yang menggunakan')) {
+            alert(`Tidak dapat menghapus "${app.name}":\n\n${result.message}\n\nTip: Gunakan tombol toggle untuk menonaktifkan aplikasi ini sebagai gantinya.`)
+          } else {
+            alert(result.message || 'Gagal menghapus aplikasi')
+          }
         }
       } catch (error) {
         console.error('Error deleting app:', error)

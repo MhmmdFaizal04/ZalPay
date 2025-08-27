@@ -73,6 +73,12 @@ export const Application = {
     return result.rows[0];
   },
 
+  async checkHasOrders(id) {
+    const query = 'SELECT COUNT(*) as count FROM orders WHERE app_id = $1';
+    const result = await pool.query(query, [id]);
+    return parseInt(result.rows[0].count) > 0;
+  },
+
   async updateAvailability(id, available) {
     const query = 'UPDATE applications SET available = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *';
     const result = await pool.query(query, [available, id]);

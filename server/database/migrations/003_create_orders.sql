@@ -7,6 +7,5 @@ CREATE TABLE IF NOT EXISTS orders (
   quantity INTEGER DEFAULT 1,
   total_price DECIMAL(10,2),
   customer_info JSONB,
-  status VARCHAR(20) DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

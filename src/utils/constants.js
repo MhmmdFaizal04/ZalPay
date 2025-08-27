@@ -7,28 +7,6 @@ export const APP_VERSION = '1.0.0'
 export const WHATSAPP_NUMBER = '62895401426305'
 export const WHATSAPP_BASE_URL = 'https://wa.me'
 
-// Order status
-export const ORDER_STATUS = {
-  PENDING: 'pending',
-  PROCESSING: 'processing',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled'
-}
-
-export const ORDER_STATUS_LABELS = {
-  [ORDER_STATUS.PENDING]: 'Menunggu Pembayaran',
-  [ORDER_STATUS.PROCESSING]: 'Sedang Diproses',
-  [ORDER_STATUS.COMPLETED]: 'Selesai',
-  [ORDER_STATUS.CANCELLED]: 'Dibatalkan'
-}
-
-export const ORDER_STATUS_COLORS = {
-  [ORDER_STATUS.PENDING]: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  [ORDER_STATUS.PROCESSING]: 'bg-blue-100 text-blue-800 border-blue-200',
-  [ORDER_STATUS.COMPLETED]: 'bg-green-100 text-green-800 border-green-200',
-  [ORDER_STATUS.CANCELLED]: 'bg-red-100 text-red-800 border-red-200'
-}
-
 // File upload
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
@@ -54,7 +32,6 @@ export const API_ENDPOINTS = {
   ORDERS: {
     BASE: '/orders',
     BY_ORDER_ID: (orderId) => `/orders/order-id/${orderId}`,
-    UPDATE_STATUS: (id) => `/orders/${id}/status`,
     STATS: '/orders/stats'
   }
 }

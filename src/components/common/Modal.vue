@@ -7,9 +7,9 @@
     ></div>
     
     <!-- Modal Container -->
-    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+    <div class="flex min-h-full items-center justify-center p-4 text-center">
       <!-- Modal -->
-      <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full max-w-lg sm:max-w-2xl">
+      <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-lg sm:max-w-2xl">
         <!-- Header -->
         <div v-if="title" class="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 bg-gray-50">
           <h3 class="text-lg font-semibold text-gray-900">{{ title }}</h3>

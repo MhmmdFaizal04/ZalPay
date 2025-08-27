@@ -75,24 +75,6 @@ export const useOrdersStore = defineStore('orders', () => {
     }
   }
 
-  const updateOrderStatus = async (id, status) => {
-    try {
-      const response = await api.put(`/orders/${id}/status`, { status })
-      
-      if (response.data.success) {
-        await fetchOrders() // Refresh orders list
-        return { success: true, message: response.data.message }
-      } else {
-        return { success: false, message: response.data.message }
-      }
-    } catch (err) {
-      return { 
-        success: false, 
-        message: err.response?.data?.message || 'Gagal mengupdate status pesanan'
-      }
-    }
-  }
-
   const deleteOrder = async (id) => {
     try {
       const response = await api.delete(`/orders/${id}`)
@@ -132,7 +114,6 @@ export const useOrdersStore = defineStore('orders', () => {
     createOrder,
     fetchOrders,
     fetchOrderByOrderId,
-    updateOrderStatus,
     deleteOrder,
     fetchOrderStats
   }

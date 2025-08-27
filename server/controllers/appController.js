@@ -151,11 +151,21 @@ export const appController = {
         return res.status(404).json(createResponse(false, 'Aplikasi tidak ditemukan'));
       }
 
+      // Check if there are any orders for this app
+      const hasOrders = await Application.checkHasOrders(id);
+      if (hasOrders) {
+        return res.status(400).json(createResponse(false, 'Tidak dapat menghapus aplikasi karena masih ada pesanan yang menggunakan aplikasi ini. Anda dapat menonaktifkan aplikasi ini sebagai gantinya.'));
+      }
+
       await Application.delete(id);
       res.json(createResponse(true, 'Aplikasi berhasil dihapus'));
     } catch (error) {
       console.error('Delete app error:', error);
-      res.status(500).json(createResponse(false, 'Server error'));
+      if (error.code === '23503') {
+        res.status(400).json(createResponse(false, 'Tidak dapat menghapus aplikasi karena masih ada pesanan yang menggunakan aplikasi ini. Anda dapat menonaktifkan aplikasi ini sebagai gantinya.'));
+      } else {
+        res.status(500).json(createResponse(false, 'Server error'));
+      }
     }
   },
 

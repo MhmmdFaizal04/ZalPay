@@ -13,7 +13,6 @@ router.get('/order-id/:order_id', orderController.getOrderByOrderId);
 router.get('/', authenticateToken, authorizeAdmin, orderController.getAllOrders);
 router.get('/stats', authenticateToken, authorizeAdmin, orderController.getOrderStats);
 router.get('/:id', authenticateToken, authorizeAdmin, orderController.getOrderById);
-router.put('/:id/status', authenticateToken, authorizeAdmin, orderController.updateOrderStatus);
 router.delete('/:id', authenticateToken, authorizeAdmin, orderController.deleteOrder);
 
 export default router;

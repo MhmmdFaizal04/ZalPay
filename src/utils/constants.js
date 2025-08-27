@@ -4,7 +4,7 @@ export const APP_DESCRIPTION = 'Platform penjualan aplikasi premium terpercaya'
 export const APP_VERSION = '1.0.0'
 
 // WhatsApp configuration
-export const WHATSAPP_NUMBER = '6285401426305'
+export const WHATSAPP_NUMBER = '62895401426305'
 export const WHATSAPP_BASE_URL = 'https://wa.me'
 
 // Order status

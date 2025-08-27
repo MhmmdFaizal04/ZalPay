@@ -80,9 +80,16 @@ export function useWhatsapp() {
     return generateOrderMessage(order)
   }
 
+  const openWhatsApp = (message) => {
+    const encodedMessage = encodeURIComponent(message)
+    const url = `${WHATSAPP_BASE_URL}/${WHATSAPP_NUMBER}?text=${encodedMessage}`
+    window.open(url, '_blank')
+  }
+
   return {
     sendToWhatsapp,
     generateReceiptMessage,
-    generateOrderMessage
+    generateOrderMessage,
+    openWhatsApp
   }
 }

@@ -52,10 +52,10 @@
         <div class="flex items-start">
           <i class='bx bx-error text-yellow-600 text-2xl mr-3 mt-1'></i>
           <div class="text-left flex-1">
-            <p class="text-base font-bold text-yellow-800 mb-1">⚠️ PENTING! Pastikan Nominal Pembayaran</p>
+            <p class="text-base font-bold text-yellow-800 mb-1">PENTING! Pastikan Nominal Pembayaran</p>
             <div class="bg-yellow-100 rounded-md p-3 mb-2">
               <p class="text-lg font-bold text-yellow-900 text-center">
-                💰 Rp {{ formatCurrency(orderInfo.totalAmount) }}
+                Rp {{ formatCurrency(orderInfo.totalAmount) }}
               </p>
             </div>
             <p class="text-sm text-yellow-700">
@@ -146,42 +146,42 @@ const sendToWhatsApp = () => {
   })
 
   const message = encodeURIComponent(
-    `*══════════════════════════*
-*🛒 KONFIRMASI PEMBAYARAN*
-*══════════════════════════*
-*ZALPAY PREMIUM STORE*
+    `=================================
+KONFIRMASI PEMBAYARAN
+=================================
+ZALPAY PREMIUM STORE
 
-📅 *Tanggal:* ${orderDate.toLocaleDateString('id-ID')}
-⏰ *Waktu:* ${orderTime}
-🆔 *Order ID:* ${props.orderInfo.orderId}
+Tanggal: ${orderDate.toLocaleDateString('id-ID')}
+Waktu: ${orderTime}
+Order ID: ${props.orderInfo.orderId}
 
-*┌─────────────────────────┐*
-*│        DETAIL PESANAN        │*
-*└─────────────────────────┘*
+---------------------------------
+DETAIL PESANAN
+---------------------------------
 
-📱 *Aplikasi:* ${props.orderInfo.appName}
-� *Varian:* ${props.orderInfo.variant}
-*💰 TOTAL BAYAR: Rp ${formatCurrency(props.orderInfo.totalAmount)}*
+Aplikasi: ${props.orderInfo.appName}
+Varian: ${props.orderInfo.variant}
+TOTAL BAYAR: Rp ${formatCurrency(props.orderInfo.totalAmount)}
 
-*┌─────────────────────────┐*
-*│      KONFIRMASI BAYAR    │*
-*└─────────────────────────┘*
+---------------------------------
+KONFIRMASI BAYAR
+---------------------------------
 
-✅ Saya sudah melakukan pembayaran QRIS
-💳 Nominal: Rp ${formatCurrency(props.orderInfo.totalAmount)}
-📸 Bukti pembayaran akan saya kirim
+Saya sudah melakukan pembayaran QRIS
+Nominal: Rp ${formatCurrency(props.orderInfo.totalAmount)}
+Bukti pembayaran akan saya kirim
 
-*┌─────────────────────────┐*
-*│        PERMINTAAN        │*
-*└─────────────────────────┘*
+---------------------------------
+PERMINTAAN
+---------------------------------
 
-🙏 Mohon segera diproses setelah menerima bukti pembayaran
-📧 Link download aplikasi kirim ke email yang terdaftar
+Mohon segera diproses setelah menerima bukti pembayaran
+Link download aplikasi kirim ke email yang terdaftar
 
-*══════════════════════════*
-*Terima kasih!*
-*🙏 ZALPAY PREMIUM STORE 🙏*
-*══════════════════════════*`
+=================================
+Terima kasih!
+ZALPAY PREMIUM STORE
+=================================`
   )
   
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank')

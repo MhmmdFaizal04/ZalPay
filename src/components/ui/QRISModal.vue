@@ -47,24 +47,6 @@
         </div>
       </div>
 
-      <!-- Amount Input Reminder -->
-      <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
-        <div class="flex items-start">
-          <i class='bx bx-error text-yellow-600 text-2xl mr-3 mt-1'></i>
-          <div class="text-left flex-1">
-            <p class="text-base font-bold text-yellow-800 mb-1">Pastikan Nominal Pembayaran</p>
-            <div class="bg-yellow-100 rounded-md p-3 mb-2">
-              <p class="text-lg font-bold text-yellow-900 text-center">
-                Rp {{ formatCurrency(orderInfo.totalAmount) }}
-              </p>
-            </div>
-            <p class="text-sm text-yellow-700">
-              Transfer dengan nominal yang <strong>TEPAT</strong>. Jika berbeda, pesanan akan ditolak dan harus mengulang pembayaran.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <!-- Action Buttons -->
       <div class="flex flex-col sm:flex-row gap-3 pt-4">
         <Button

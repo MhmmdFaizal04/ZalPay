@@ -1,0 +1,44 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#F9FAFB"/>
+  <rect x="16" y="16" width="224" height="224" fill="white" stroke="#D1D5DB" stroke-width="2"/>
+  
+  <!-- QR Code Pattern Simulation -->
+  <g fill="#111827">
+    <!-- Corner squares -->
+    <rect x="32" y="32" width="48" height="48"/>
+    <rect x="40" y="40" width="32" height="32" fill="white"/>
+    <rect x="48" y="48" width="16" height="16"/>
+    
+    <rect x="176" y="32" width="48" height="48"/>
+    <rect x="184" y="40" width="32" height="32" fill="white"/>
+    <rect x="192" y="192" width="16" height="16"/>
+    
+    <rect x="32" y="176" width="48" height="48"/>
+    <rect x="40" y="184" width="32" height="32" fill="white"/>
+    <rect x="48" y="192" width="16" height="16"/>
+    
+    <!-- Random pattern -->
+    <rect x="96" y="32" width="8" height="8"/>
+    <rect x="112" y="32" width="8" height="8"/>
+    <rect x="96" y="48" width="8" height="8"/>
+    <rect x="128" y="48" width="8" height="8"/>
+    <rect x="144" y="32" width="8" height="8"/>
+    <rect x="160" y="48" width="8" height="8"/>
+    
+    <rect x="32" y="96" width="8" height="8"/>
+    <rect x="48" y="96" width="8" height="8"/>
+    <rect x="64" y="112" width="8" height="8"/>
+    <rect x="80" y="96" width="8" height="8"/>
+    <rect x="96" y="112" width="8" height="8"/>
+    <rect x="112" y="96" width="8" height="8"/>
+    
+    <rect x="128" y="128" width="8" height="8"/>
+    <rect x="144" y="112" width="8" height="8"/>
+    <rect x="160" y="128" width="8" height="8"/>
+    <rect x="176" y="112" width="8" height="8"/>
+    <rect x="192" y="128" width="8" height="8"/>
+    <rect x="208" y="112" width="8" height="8"/>
+  </g>
+  
+  <text x="128" y="245" font-family="Arial, sans-serif" font-size="12" fill="#6B7280" text-anchor="middle">QRIS Code</text>
+</svg>

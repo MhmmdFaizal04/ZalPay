@@ -39,7 +39,7 @@
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Manajemen Aplikasi</h1>
             <p class="mt-2 text-sm sm:text-base text-gray-600">Kelola aplikasi yang tersedia di platform</p>
           </div>
-          <Button @click="showCreateModal = true" class="w-full sm:w-auto">
+          <Button @click="openCreateModal" class="w-full sm:w-auto">
             <i class='bx bx-plus mr-2'></i>
             Tambah Aplikasi
           </Button>
@@ -58,7 +58,7 @@
           <p class="text-gray-600 mb-4">
             Mulai dengan menambahkan aplikasi pertama Anda
           </p>
-          <Button @click="showCreateModal = true">
+          <Button @click="openCreateModal">
             Tambah Aplikasi
           </Button>
         </div>
@@ -416,7 +416,13 @@ export default {
     }
 
     const editApp = (app) => {
+      // First reset editing state
+      editingApp.value = null
+      
+      // Then set the editing app
       editingApp.value = app
+      
+      // Populate form with app data
       Object.assign(form, {
         name: app.name,
         description: app.description,
@@ -428,6 +434,12 @@ export default {
                   typeof app.features === 'string' ? JSON.parse(app.features || '[""]') : [''],
         image: null
       })
+      
+      // Clear file input
+      if (document.querySelector('input[type="file"]')) {
+        document.querySelector('input[type="file"]').value = ''
+      }
+      
       showCreateModal.value = true
     }
 
@@ -483,6 +495,28 @@ export default {
         features: [''],
         image: null
       })
+      // Clear file input
+      if (document.querySelector('input[type="file"]')) {
+        document.querySelector('input[type="file"]').value = ''
+      }
+    }
+
+    const openCreateModal = () => {
+      // Reset state first
+      editingApp.value = null
+      Object.assign(form, {
+        name: '',
+        description: '',
+        category: '',
+        variants: [{ name: '', price: '' }],
+        features: [''],
+        image: null
+      })
+      // Clear file input
+      if (document.querySelector('input[type="file"]')) {
+        document.querySelector('input[type="file"]').value = ''
+      }
+      showCreateModal.value = true
     }
 
     const handleFileChange = (event) => {
@@ -535,6 +569,7 @@ export default {
       editApp,
       toggleAvailability,
       deleteApp,
+      openCreateModal,
       closeModal,
       handleFileChange,
       handleLogout,

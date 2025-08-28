@@ -95,6 +95,14 @@
                 {{ app.description }}
               </p>
               
+              <!-- Price Range -->
+              <div class="mb-2 text-xs text-center" v-if="app.variants && app.variants.length > 0">
+                <span class="text-blue-600 font-semibold">
+                  {{ formatPriceRange(app.variants) }}
+                </span>
+                <span class="text-gray-500 ml-1">({{ app.variants.length }} varian)</span>
+              </div>
+              
               <div class="flex justify-center space-x-1">
                 <button
                   @click="editApp(app)"
@@ -154,35 +162,36 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Harga (Rp)
-          </label>
-          <Input
-            v-model="form.price"
-            type="number"
-            placeholder="Masukkan harga aplikasi"
-            min="0"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
             Varian Aplikasi
           </label>
-          <div class="space-y-2">
-            <div v-for="(variant, index) in form.variants" :key="index" class="flex gap-2">
-              <Input
-                v-model="form.variants[index]"
-                type="text"
-                placeholder="Nama varian (contoh: Monthly, Yearly)"
-                class="flex-1"
-              />
+          <div class="space-y-3">
+            <div v-for="(variant, index) in form.variants" :key="index" class="flex gap-2 items-end">
+              <div class="flex-1">
+                <label class="block text-xs text-gray-600 mb-1">Nama Varian</label>
+                <Input
+                  v-model="variant.name"
+                  type="text"
+                  placeholder="Nama varian (contoh: Pro 30D 1PCS)"
+                  required
+                />
+              </div>
+              <div class="w-32">
+                <label class="block text-xs text-gray-600 mb-1">Harga (Rp)</label>
+                <Input
+                  v-model="variant.price"
+                  type="number"
+                  placeholder="25000"
+                  min="0"
+                  required
+                />
+              </div>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 @click="removeVariant(index)"
                 v-if="form.variants.length > 1"
+                class="mb-0"
               >
                 <i class='bx bx-trash'></i>
               </Button>
@@ -323,8 +332,7 @@ export default {
       name: '',
       description: '',
       category: '',
-      price: '',
-      variants: [''],
+      variants: [{ name: '', price: '' }],
       features: [''],
       image: null
     })
@@ -334,7 +342,7 @@ export default {
     }
 
     const addVariant = () => {
-      form.variants.push('')
+      form.variants.push({ name: '', price: '' })
     }
 
     const removeVariant = (index) => {
@@ -362,16 +370,21 @@ export default {
         submitting.value = true
         
         // Filter out empty variants and features
-        const cleanVariants = form.variants.filter(v => v.trim())
+        const cleanVariants = form.variants.filter(v => v.name.trim() && v.price)
         const cleanFeatures = form.features.filter(f => f.trim())
+        
+        // Convert price to number for each variant
+        const processedVariants = cleanVariants.map(v => ({
+          name: v.name.trim(),
+          price: parseFloat(v.price)
+        }))
         
         const formData = {
           name: form.name,
           slug: generateSlug(form.name),
           description: form.description,
           category: form.category,
-          price: parseFloat(form.price),
-          variants: cleanVariants,
+          variants: processedVariants,
           features: cleanFeatures,
           available: true
         }
@@ -408,9 +421,9 @@ export default {
         name: app.name,
         description: app.description,
         category: app.category,
-        price: app.price,
-        variants: Array.isArray(app.variants) ? [...app.variants] : 
-                  typeof app.variants === 'string' ? JSON.parse(app.variants || '[""]') : [''],
+        variants: app.variants && app.variants.length > 0 ? 
+                  app.variants.map(v => ({ name: v.name, price: v.price.toString() })) : 
+                  [{ name: '', price: '' }],
         features: Array.isArray(app.features) ? [...app.features] : 
                   typeof app.features === 'string' ? JSON.parse(app.features || '[""]') : [''],
         image: null
@@ -466,8 +479,7 @@ export default {
         name: '',
         description: '',
         category: '',
-        price: '',
-        variants: [''],
+        variants: [{ name: '', price: '' }],
         features: [''],
         image: null
       })
@@ -487,6 +499,20 @@ export default {
 
     const handleImageError = (event) => {
       event.target.src = '/images/placeholder-app.png'
+    }
+
+    const formatPriceRange = (variants) => {
+      if (!variants || variants.length === 0) return 'Rp 0'
+      
+      const prices = variants.map(v => parseFloat(v.price)).sort((a, b) => a - b)
+      const minPrice = prices[0]
+      const maxPrice = prices[prices.length - 1]
+      
+      if (minPrice === maxPrice) {
+        return `Rp ${new Intl.NumberFormat('id-ID').format(minPrice)}`
+      } else {
+        return `Rp ${new Intl.NumberFormat('id-ID').format(minPrice)} - ${new Intl.NumberFormat('id-ID').format(maxPrice)}`
+      }
     }
 
     onMounted(() => {
@@ -512,7 +538,8 @@ export default {
       closeModal,
       handleFileChange,
       handleLogout,
-      handleImageError
+      handleImageError,
+      formatPriceRange
     }
   }
 }

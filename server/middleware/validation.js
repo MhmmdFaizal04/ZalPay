@@ -28,7 +28,8 @@ export const validateCreateApp = [
 
 export const validateCreateOrder = [
   body('app_id').isNumeric().withMessage('App ID harus berupa angka'),
-  body('variant').notEmpty().withMessage('Variant harus diisi'),
+  body('variant_name').notEmpty().withMessage('Nama variant harus diisi'),
+  body('variant_price').isNumeric().withMessage('Harga variant harus berupa angka'),
   body('quantity').isInt({ min: 1 }).withMessage('Quantity minimal 1'),
   body('customer_info.name').notEmpty().withMessage('Nama customer harus diisi'),
   body('customer_info.email').isEmail().withMessage('Email customer tidak valid'),

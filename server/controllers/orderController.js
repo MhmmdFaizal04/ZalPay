@@ -6,10 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 export const orderController = {
   async createOrder(req, res) {
     try {
-      const { app_id, variant, quantity, customer_info } = req.body;
+      const { app_id, variant_name, variant_price, quantity, customer_info } = req.body;
       console.log('Create order request:', req.body);
 
-      if (!app_id || !variant || !quantity || !customer_info) {
+      if (!app_id || !variant_name || !variant_price || !quantity || !customer_info) {
         return res.status(400).json(createResponse(false, 'Semua field harus diisi'));
       }
 
@@ -26,7 +26,7 @@ export const orderController = {
       }
 
       // Calculate total price
-      const total_price = parseFloat(app.price) * parseInt(quantity);
+      const total_price = parseFloat(variant_price) * parseInt(quantity);
 
       // Generate unique order ID
       const order_id = `ZP${Date.now()}${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
@@ -34,7 +34,8 @@ export const orderController = {
       const newOrder = await Order.create({
         order_id,
         app_id,
-        variant,
+        variant_name,
+        variant_price: parseFloat(variant_price),
         quantity: parseInt(quantity),
         total_price,
         customer_info

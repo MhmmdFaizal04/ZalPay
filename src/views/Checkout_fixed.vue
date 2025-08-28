@@ -51,35 +51,32 @@
             <p class="text-gray-600 mb-6">
               {{ app.description }}
             </p>
-            
-            <div class="space-y-4">
-              <div>
-                <h3 class="font-semibold text-gray-900 mb-2">Kategori</h3>
-                <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
-                  {{ app.category }}
-                </span>
-              </div>
-              
-              <div v-if="appFeatures && appFeatures.length > 0">
-                <h3 class="font-semibold text-gray-900 mb-2">Fitur</h3>
-                <ul class="list-disc list-inside text-gray-600 space-y-1">
-                  <li v-for="feature in appFeatures" :key="feature">
-                    {{ feature }}
-                  </li>
-                </ul>
-              </div>
+
+            <!-- Features -->
+            <div v-if="app.features" class="mb-6">
+              <h3 class="font-semibold text-gray-900 mb-3">Fitur:</h3>
+              <ul class="space-y-2">
+                <li 
+                  v-for="feature in appFeatures" 
+                  :key="feature"
+                  class="flex items-center text-sm text-gray-600"
+                >
+                  <i class='bx bx-check text-green-500 mr-2'></i>
+                  {{ feature }}
+                </li>
+              </ul>
             </div>
           </div>
 
           <!-- Order Form -->
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-6">
-              Detail Pemesanan
+              Informasi Pemesanan
             </h2>
 
             <form @submit.prevent="handleSubmit" class="space-y-6">
               <!-- Variant Selection -->
-              <div v-if="appVariants && appVariants.length > 0">
+              <div v-if="appVariants.length > 0">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   Pilih Varian
                 </label>
@@ -89,24 +86,13 @@
                   required
                 >
                   <option value="">Pilih varian...</option>
-                  <template v-if="isNewFormat">
-                    <option
-                      v-for="variant in appVariants"
-                      :key="variant.name"
-                      :value="JSON.stringify(variant)"
-                    >
-                      {{ variant.name }} - Rp {{ formatPrice(variant.price) }}
-                    </option>
-                  </template>
-                  <template v-else>
-                    <option
-                      v-for="variant in appVariants"
-                      :key="variant"
-                      :value="variant"
-                    >
-                      {{ variant }}
-                    </option>
-                  </template>
+                  <option
+                    v-for="(variant, index) in appVariants"
+                    :key="index"
+                    :value="variant"
+                  >
+                    {{ variant }}
+                  </option>
                 </select>
               </div>
 
@@ -142,7 +128,7 @@
                 <Input
                   v-model="form.customer_phone"
                   type="tel"
-                  placeholder="08xxxxxxxxxx"
+                  placeholder="Contoh: 08123456789"
                   required
                 />
               </div>
@@ -152,11 +138,11 @@
                 <div class="flex justify-between items-center text-lg font-semibold">
                   <span>Total Pembayaran:</span>
                   <span class="text-blue-600">
-                    Rp {{ formatPrice(selectedVariant?.price || app.price || 0) }}
+                    Rp {{ formatPrice(app.price || 0) }}
                   </span>
                 </div>
                 <div class="text-sm text-gray-600 mt-1">
-                  Varian: {{ selectedVariant?.name || form.variant }}
+                  Varian: {{ form.variant }}
                 </div>
               </div>
 
@@ -166,10 +152,10 @@
                 :disabled="!app.available || submitting"
                 :loading="submitting"
                 class="w-full"
+                size="lg"
               >
-                <span v-if="!app.available">Tidak Tersedia</span>
-                <span v-else-if="submitting">Memproses Pesanan...</span>
-                <span v-else>Buat Pesanan</span>
+                <i class='bx bx-cart mr-2'></i>
+                {{ submitting ? 'Memproses...' : 'Lanjutkan ke Pembayaran' }}
               </Button>
             </form>
           </div>
@@ -184,27 +170,27 @@
     />
   </MainLayout>
 </template>
+
 <script>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppsStore } from '@/store/modules/apps.js'
 import { useOrdersStore } from '@/store/modules/orders.js'
-import { useWhatsapp } from '@/composables/useWhatsapp.js'
 import MainLayout from '@/components/layout/MainLayout.vue'
-import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
-import StatusBadge from '@/components/ui/StatusBadge.vue'
+import Input from '@/components/ui/Input.vue'
 import Loading from '@/components/common/Loading.vue'
+import StatusBadge from '@/components/ui/StatusBadge.vue'
 import QRISModal from '@/components/ui/QRISModal.vue'
 
 export default {
   name: 'Checkout',
   components: {
     MainLayout,
-    Input,
     Button,
-    StatusBadge,
+    Input,
     Loading,
+    StatusBadge,
     QRISModal
   },
   setup() {
@@ -212,9 +198,8 @@ export default {
     const router = useRouter()
     const appsStore = useAppsStore()
     const ordersStore = useOrdersStore()
-    const { openWhatsApp: openWhatsAppComposable } = useWhatsapp()
 
-    const loading = ref(true)
+    const loading = ref(false)
     const submitting = ref(false)
     const showQRISModal = ref(false)
     const app = ref(null)
@@ -256,37 +241,11 @@ export default {
       }
     })
 
-    const selectedVariant = computed(() => {
-      if (!form.variant) return null
-      try {
-        // Handle both old format (string) and new format (object)
-        if (typeof form.variant === 'string') {
-          // Try to parse as JSON first (new format)
-          try {
-            return JSON.parse(form.variant)
-          } catch {
-            // If parsing fails, it's old format (just string name)
-            return { name: form.variant, price: 0 }
-          }
-        }
-        return form.variant
-      } catch {
-        return null
-      }
-    })
-
-    const isNewFormat = computed(() => {
-      if (!appVariants.value || appVariants.value.length === 0) return false
-      const firstVariant = appVariants.value[0]
-      return typeof firstVariant === 'object' && firstVariant.name && firstVariant.price
-    })
-
     const fetchApp = async () => {
       try {
         loading.value = true
         app.value = await appsStore.fetchAppBySlug(route.params.slug)
         console.log('App data in checkout:', app.value)
-        console.log('App available status:', app.value?.available)
       } catch (error) {
         console.error('Error fetching app:', error)
       } finally {
@@ -300,33 +259,15 @@ export default {
       try {
         submitting.value = true
         
-        let orderData
-        
-        if (isNewFormat.value && selectedVariant.value) {
-          // New format with variant objects
-          orderData = {
-            app_id: app.value.id,
-            variant_name: selectedVariant.value.name,
-            variant_price: selectedVariant.value.price,
-            quantity: 1,
-            customer_info: {
-              name: form.customer_name,
-              email: form.customer_email,
-              phone: form.customer_phone
-            }
-          }
-        } else {
-          // Old format with string variants
-          orderData = {
-            app_id: app.value.id,
-            variant_name: form.variant,
-            variant_price: app.value.price,
-            quantity: 1,
-            customer_info: {
-              name: form.customer_name,
-              email: form.customer_email,
-              phone: form.customer_phone
-            }
+        const orderData = {
+          app_id: app.value.id,
+          variant_name: form.variant,
+          variant_price: app.value.price,
+          quantity: 1,
+          customer_info: {
+            name: form.customer_name,
+            email: form.customer_email,
+            phone: form.customer_phone
           }
         }
 
@@ -340,44 +281,21 @@ export default {
           qrisOrderInfo.value = {
             orderId: result.order.order_id,
             appName: app.value.name,
-            variant: selectedVariant.value?.name || form.variant,
-            totalAmount: selectedVariant.value?.price || app.value.price,
-            customerName: form.customer_name,
-            customerEmail: form.customer_email,
-            customerPhone: form.customer_phone
+            variant: form.variant,
+            totalAmount: app.value.price
           }
           
-          // Show QRIS modal instead of success modal
+          // Show QRIS modal
           showQRISModal.value = true
-          
-          // Reset form
-          Object.assign(form, {
-            variant: '',
-            customer_name: '',
-            customer_email: '',
-            customer_phone: ''
-          })
         } else {
-          alert(result.message || 'Terjadi kesalahan saat membuat pesanan.')
+          alert('Gagal membuat pesanan: ' + result.message)
         }
       } catch (error) {
         console.error('Error creating order:', error)
-        alert('Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.')
+        alert('Terjadi kesalahan saat membuat pesanan')
       } finally {
         submitting.value = false
       }
-    }
-
-    const openWhatsApp = () => {
-      if (orderResult.value) {
-        const message = `Halo, saya ingin melakukan pembayaran untuk order ${orderResult.value.order_id}`
-        openWhatsAppComposable(message)
-      }
-    }
-
-    const goToHome = () => {
-      showQRISModal.value = false
-      router.push('/')
     }
 
     const formatPrice = (price) => {
@@ -402,11 +320,7 @@ export default {
       form,
       appVariants,
       appFeatures,
-      selectedVariant,
-      isNewFormat,
       handleSubmit,
-      openWhatsApp,
-      goToHome,
       formatPrice,
       handleImageError
     }

@@ -2,13 +2,23 @@ import pool from '../database/connection.js';
 
 export const Order = {
   async create(orderData) {
-    const { order_id, app_id, variant, quantity, total_price, customer_info } = orderData;
+    const { order_id, app_id, variant_name, variant_price, quantity, customer_info } = orderData;
+    const total_price = variant_price * quantity;
+    
     const query = `
-      INSERT INTO orders (order_id, app_id, variant, quantity, total_price, customer_info)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO orders (order_id, app_id, variant_name, variant_price, quantity, total_price, customer_info)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
     `;
-    const result = await pool.query(query, [order_id, app_id, variant, quantity, total_price, JSON.stringify(customer_info)]);
+    const result = await pool.query(query, [
+      order_id, 
+      app_id, 
+      variant_name, 
+      variant_price, 
+      quantity, 
+      total_price, 
+      JSON.stringify(customer_info)
+    ]);
     return result.rows[0];
   },
 

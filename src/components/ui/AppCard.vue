@@ -27,10 +27,10 @@
         <div class="flex flex-wrap gap-1">
           <span 
             v-for="variant in variants.slice(0, 2)" 
-            :key="variant"
+            :key="variant.name || variant"
             class="text-xs bg-gray-100 text-gray-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded"
           >
-            {{ variant }}
+            {{ getVariantDisplay(variant) }}
           </span>
           <span 
             v-if="variants.length > 2" 
@@ -44,7 +44,7 @@
       <!-- Price -->
       <div class="flex items-center justify-between mb-3 sm:mb-4">
         <span class="text-sm sm:text-lg font-bold text-gray-900">
-          {{ formatCurrency(app.price) }}
+          {{ priceDisplay }}
         </span>
       </div>
 
@@ -91,6 +91,32 @@ const variants = computed(() => {
     return []
   }
 })
+
+const priceDisplay = computed(() => {
+  // If variants have prices, show price range
+  if (variants.value.length > 0 && variants.value[0].price) {
+    const prices = variants.value.map(v => parseFloat(v.price))
+    const minPrice = Math.min(...prices)
+    const maxPrice = Math.max(...prices)
+    
+    if (minPrice === maxPrice) {
+      return formatCurrency(minPrice)
+    } else {
+      return `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`
+    }
+  }
+  
+  // Fallback to app.price
+  return formatCurrency(props.app.price || 0)
+})
+
+const getVariantDisplay = (variant) => {
+  // Handle both old format (string) and new format (object)
+  if (typeof variant === 'string') {
+    return variant
+  }
+  return variant.name || variant
+}
 
 const handleBuyClick = () => {
   if (props.app.available) {

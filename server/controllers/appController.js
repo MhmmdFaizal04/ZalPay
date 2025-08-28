@@ -46,11 +46,11 @@ export const appController = {
 
   async createApp(req, res) {
     try {
-      const { name, slug, price, variants, features, category, description, available } = req.body;
+      const { name, slug, variants, features, category, description, available } = req.body;
       console.log('Create app request body:', req.body);
 
-      if (!name || !slug || !price) {
-        return res.status(400).json(createResponse(false, 'Name, slug, dan price harus diisi'));
+      if (!name || !slug || !variants) {
+        return res.status(400).json(createResponse(false, 'Name, slug, dan variants harus diisi'));
       }
 
       // Check if slug exists
@@ -75,7 +75,6 @@ export const appController = {
       const newApp = await Application.create({
         name,
         slug,
-        price: parseFloat(price),
         variants: parsedVariants || [],
         features: parsedFeatures || [],
         category: category || 'Other',
@@ -94,7 +93,7 @@ export const appController = {
   async updateApp(req, res) {
     try {
       const { id } = req.params;
-      const { name, slug, price, variants, features, category, description, available } = req.body;
+      const { name, slug, variants, features, category, description, available } = req.body;
       console.log('Update app request:', { id, body: req.body });
 
       const existingApp = await Application.findById(id);
@@ -126,7 +125,6 @@ export const appController = {
       const updatedApp = await Application.update(id, {
         name: name || existingApp.name,
         slug: slug || existingApp.slug,
-        price: price ? parseFloat(price) : existingApp.price,
         variants: parsedVariants !== undefined ? parsedVariants : existingApp.variants,
         features: parsedFeatures !== undefined ? parsedFeatures : existingApp.features,
         category: category || existingApp.category,

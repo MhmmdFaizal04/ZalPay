@@ -157,16 +157,16 @@
             </div>
           </div>
 
-          <!-- Pending Orders -->
+          <!-- Total Apps -->
           <div class="bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center">
-              <div class="p-2 sm:p-3 rounded-full bg-yellow-100 text-yellow-600 mb-2 sm:mb-0">
-                <i class='bx bx-clock text-lg sm:text-xl lg:text-2xl'></i>
+              <div class="p-2 sm:p-3 rounded-full bg-purple-100 text-purple-600 mb-2 sm:mb-0">
+                <i class='bx bx-package text-lg sm:text-xl lg:text-2xl'></i>
               </div>
               <div class="sm:ml-4 w-full">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending</p>
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Aplikasi</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-                  {{ statistics.pendingOrders }}
+                  {{ statistics.totalApps }}
                 </p>
               </div>
             </div>
@@ -192,7 +192,7 @@
               <div class="flex justify-between items-center">
                 <span class="text-sm sm:text-base text-gray-600">Tingkat Keberhasilan:</span>
                 <span class="text-sm sm:text-base font-semibold text-green-600">
-                  {{ statistics.totalOrders > 0 ? Math.round((statistics.successOrders / statistics.totalOrders) * 100) : 0 }}%
+                  {{ statistics.totalOrders > 0 ? '100' : '0' }}%
                 </span>
               </div>
             </div>
@@ -344,6 +344,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/modules/auth.js'
 import { useAppsStore } from '@/store/modules/apps.js'
+import { useOrdersStore } from '@/store/modules/orders.js'
 import { useQRISStore } from '@/store/modules/qris.js'
 import { useApi } from '@/composables/useApi.js'
 import Button from '@/components/ui/Button.vue'
@@ -363,8 +364,9 @@ export default {
     const router = useRouter()
     const authStore = useAuthStore()
     const appsStore = useAppsStore()
+    const ordersStore = useOrdersStore()
     const qrisStore = useQRISStore()
-    const { post, put } = useApi()
+    const { get, post, put } = useApi()
 
     const loading = ref(true)
     const mobileMenuOpen = ref(false)
@@ -377,7 +379,7 @@ export default {
       totalRevenue: 0,
       totalOrders: 0,
       successOrders: 0,
-      pendingOrders: 0
+      totalApps: 0
     })
 
     const popularApps = ref([])
@@ -413,26 +415,95 @@ export default {
 
     const loadStatistics = async () => {
       try {
-        // Load apps
+        // Load apps first
         await appsStore.fetchApps()
-        
-        // Simple statistics without orders
         const apps = appsStore.apps
-        statistics.totalOrders = 0
-        statistics.totalRevenue = 0
-        statistics.successOrders = 0
-        statistics.pendingOrders = 0
+        statistics.totalApps = apps.length
         
-        // Popular apps simulation
+        // Try to load order statistics using ordersStore first
+        await ordersStore.fetchOrderStats()
+        let stats = ordersStore.stats
+        
+        // If ordersStore doesn't work, call API directly
+        if (!stats || Object.keys(stats).length === 0) {
+          console.log('OrdersStore stats empty, calling API directly...')
+          const response = await get('/orders/stats')
+          if (response.success && response.data) {
+            stats = response.data.stats
+            console.log('Direct API stats:', stats)
+          }
+        }
+        
+        console.log('Final stats to use:', stats)
+        
+        if (stats) {
+          statistics.totalOrders = parseInt(stats.total_orders) || 0
+          statistics.successOrders = parseInt(stats.completed_orders) || 0
+          statistics.totalRevenue = parseFloat(stats.total_revenue) || 0
+        }
+        
+        // Load orders to calculate popular apps
+        await ordersStore.fetchOrders()
+        const orders = ordersStore.orders || []
+        
+        console.log('Loaded orders:', orders.length, 'orders')
+        
+        // Calculate app popularity from orders
+        const appSales = {}
+        
+        orders.forEach(order => {
+          const appId = order.app_id
+          const appName = order.app_name || 'Unknown App'
+          
+          if (!appSales[appId]) {
+            appSales[appId] = { name: appName, sales: 0, revenue: 0, id: appId }
+          }
+          
+          appSales[appId].sales += 1
+          appSales[appId].revenue += parseFloat(order.total_price) || 0
+        })
+        
+        // Convert to array and sort by sales
+        popularApps.value = Object.values(appSales)
+          .sort((a, b) => b.sales - a.sales)
+          .slice(0, 5)
+          .map(app => ({
+            id: app.id,
+            name: app.name,
+            sales: app.sales,
+            revenue: app.revenue,
+            category: apps.find(a => a.id === app.id)?.category || 'Premium App'
+          }))
+        
+        // If no orders, show apps without sales data
+        if (popularApps.value.length === 0) {
+          popularApps.value = apps.slice(0, 5).map(app => ({
+            id: app.id,
+            name: app.name,
+            sales: 0,
+            revenue: 0,
+            category: app.category || 'Premium App'
+          }))
+        }
+        
+        console.log('Popular apps:', popularApps.value)
+          
+      } catch (error) {
+        console.error('Error loading statistics:', error)
+        // Fallback values if API fails
+        const apps = appsStore.apps || []
+        statistics.totalApps = apps.length
+        statistics.totalOrders = 0
+        statistics.successOrders = 0
+        statistics.totalRevenue = 0
+        
         popularApps.value = apps.slice(0, 5).map(app => ({
+          id: app.id,
           name: app.name,
           sales: 0,
           revenue: 0,
           category: app.category || 'Premium App'
         }))
-          
-      } catch (error) {
-        console.error('Error loading statistics:', error)
       }
     }
 

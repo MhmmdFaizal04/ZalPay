@@ -6,8 +6,8 @@ export const Order = {
     const total_price = variant_price * quantity;
     
     const query = `
-      INSERT INTO orders (order_id, app_id, variant_name, variant_price, quantity, total_price, customer_info)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO orders (order_id, app_id, variant_name, variant_price, quantity, total_price, customer_info, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `;
     const result = await pool.query(query, [
@@ -17,7 +17,8 @@ export const Order = {
       variant_price, 
       quantity, 
       total_price, 
-      JSON.stringify(customer_info)
+      JSON.stringify(customer_info),
+      'completed' // Otomatis completed karena user akan langsung ke WhatsApp
     ]);
     return result.rows[0];
   },
@@ -65,9 +66,8 @@ export const Order = {
     const query = `
       SELECT 
         COUNT(*) as total_orders,
-        COUNT(*) as completed_orders,
-        0 as pending_orders,
-        COALESCE(SUM(total_price), 0) as total_revenue
+        COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_orders,
+        COALESCE(SUM(CASE WHEN status = 'completed' THEN total_price ELSE 0 END), 0) as total_revenue
       FROM orders
     `;
     const result = await pool.query(query);

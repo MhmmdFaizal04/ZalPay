@@ -47,6 +47,88 @@
       </div>
     </section>
 
+    <!-- Join Reseller Group Section -->
+    <section class="py-16 bg-gradient-to-r from-green-600 to-green-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <div class="mb-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
+              <i class='bx bxl-whatsapp text-green-600 text-3xl'></i>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+              Bergabung Dengan Reseller Kami
+            </h2>
+            <p class="text-lg text-green-100 max-w-2xl mx-auto mb-8">
+              Dapatkan komisi menarik dengan menjadi reseller ZalPay Premium. 
+              Bergabunglah dengan grup WhatsApp reseller untuk mendapatkan info terbaru dan dukungan eksklusif.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 text-white">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-money text-2xl'></i>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Komisi Menarik</h3>
+              <p class="text-green-100">Dapatkan komisi hingga 30% dari setiap penjualan</p>
+            </div>
+
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 text-white">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-support text-2xl'></i>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Support Penuh</h3>
+              <p class="text-green-100">Tim support khusus reseller 24/7</p>
+            </div>
+
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 text-white">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-trending-up text-2xl'></i>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Produk Update</h3>
+              <p class="text-green-100">Info produk baru dan promo eksklusif</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <Button 
+              size="lg" 
+              variant="secondary"
+              @click="joinResellerGroup"
+              class="bg-white text-green-600 hover:bg-gray-100 border-0 shadow-lg transform hover:scale-105 transition-all duration-200"
+            >
+              <i class='bx bxl-whatsapp mr-2 text-xl'></i>
+              Join Group Reseller WhatsApp
+            </Button>
+            
+            <p class="text-green-100 text-sm">
+              Gratis bergabung • Info lengkap tersedia di grup • Support full time
+            </p>
+          </div>
+
+          <!-- Additional Info -->
+          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+            <div class="bg-white bg-opacity-10 rounded-lg p-4">
+              <div class="text-2xl font-bold text-white">500+</div>
+              <div class="text-green-100 text-sm">Reseller Aktif</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-lg p-4">
+              <div class="text-2xl font-bold text-white">30%</div>
+              <div class="text-green-100 text-sm">Komisi Maksimal</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-lg p-4">
+              <div class="text-2xl font-bold text-white">24/7</div>
+              <div class="text-green-100 text-sm">Support Reseller</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-lg p-4">
+              <div class="text-2xl font-bold text-white">50+</div>
+              <div class="text-green-100 text-sm">Produk Tersedia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Testimonials Section -->
     <section class="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -426,6 +508,10 @@ const scrollToFeatures = () => {
 const contactWhatsApp = () => {
   const message = encodeURIComponent('Halo, saya tertarik dengan aplikasi premium di ZalPay. Bisakah Anda membantu saya?')
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank')
+}
+
+const joinResellerGroup = () => {
+  window.open('https://chat.whatsapp.com/If8dYATtgWAHhUAfYU8Ggd?mode=ac_t', '_blank')
 }
 
 onMounted(async () => {
